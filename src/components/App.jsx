@@ -11,6 +11,7 @@ export const App = () => {
     setPage(page)
   };
 
+  
   const addNewPage = () => {
     setPage(page + 1)
   };

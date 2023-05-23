@@ -9,7 +9,7 @@ export const Searchbar =({handleSearch}) => {
    setValue(value)
   };
 
- const handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     handleSearch(value)
   }

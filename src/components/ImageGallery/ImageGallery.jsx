@@ -15,24 +15,16 @@ export const ImageGallery =({searchImages, page, addNewPage}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [largeImageUrl, setLargeImageUrl] = useState("")
 
+
   useEffect(() => {
+    if (!searchImages) return;
     setIsLoading(true)
       getImages(searchImages, page)
         .then(responce => responce.json())
-        .then(data => setImages(data.hits))
+        .then(data => setImages(prevImages => [...prevImages, ...data.hits]))
         .finally(() => { setIsLoading(false)
         });
-
-  }, [searchImages]);
-
-useEffect(() => {
-    setIsLoading(true)
-      getImages(searchImages, page)
-        .then(responce => responce.json())
-        .then(data => setImages([...images, ...data.hits]))
-        .finally(() => { setIsLoading(false)
-        });
-  }, [page]);
+  }, [searchImages, page]);
 
   const handleModal = newIsOpen => {
     setIsOpen(newIsOpen)
@@ -41,6 +33,10 @@ useEffect(() => {
   const changeLargeImageUrl = largeImageUrl => {
     setLargeImageUrl(largeImageUrl)
   };
+
+  useEffect(() => {
+  setImages([])
+}, [searchImages])
 
     return (
       <>
