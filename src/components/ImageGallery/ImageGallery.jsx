@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getImages } from 'services/getImages';
 import { ImageGalleryItem } from 'components/ImageGalleryItem';
 import css from './ImageGallery.module.css';
@@ -6,70 +6,65 @@ import { Loader } from 'components/Loader';
 import { Modal } from 'components/Modal';
 import PropTypes from 'prop-types';
 import { LoadMoreButton } from 'components/LoadMoreButton';
-export class ImageGallery extends Component {
-  state = {
-    images: [],
-    isLoading: false,
-    isOpen: false,
-    largeImageUrl: '',
-  };
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.searchImages !== this.props.searchImages) {
-      this.setState({ isLoading: true });
-      getImages(this.props.searchImages, this.props.page)
+
+export const ImageGallery =({searchImages, page, addNewPage}) => {
+
+  const [images, setImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [largeImageUrl, setLargeImageUrl] = useState("")
+
+  useEffect(() => {
+    setIsLoading(true)
+      getImages(searchImages, page)
         .then(responce => responce.json())
-        .then(images => this.setState({ images: images.hits }))
-        .finally(() => {
-          this.setState({ isLoading: false });
+        .then(data => setImages(data.hits))
+        .finally(() => { setIsLoading(false)
         });
-    } else if (prevProps.page !== this.props.page) {
-      this.setState({ isLoading: true });
-      getImages(this.props.searchImages, this.props.page)
+
+  }, [searchImages]);
+
+useEffect(() => {
+    setIsLoading(true)
+      getImages(searchImages, page)
         .then(responce => responce.json())
-        .then(images =>
-          this.setState({ images: [...this.state.images, ...images.hits] })
-        )
-        .finally(() => {
-          this.setState({ isLoading: false });
+        .then(data => setImages([...images, ...data.hits]))
+        .finally(() => { setIsLoading(false)
         });
-    }
-  }
+  }, [page]);
 
-  setIsOpen = newIsOpen => {
-    this.setState({ isOpen: newIsOpen });
+  const handleModal = newIsOpen => {
+    setIsOpen(newIsOpen)
   };
 
-  changeLargeImageUrl = largeImageUrl => {
-    this.setState({ largeImageUrl: largeImageUrl });
+  const changeLargeImageUrl = largeImageUrl => {
+    setLargeImageUrl(largeImageUrl)
   };
 
-  render() {
-    const { images, isLoading } = this.state;
     return (
       <>
         {isLoading && <Loader></Loader>}
         <Modal
-          largeImageUrl={this.state.largeImageUrl}
-          setIsOpen={this.setIsOpen}
-          isOpen={this.state.isOpen}
+          largeImageUrl={largeImageUrl}
+          handleModal={handleModal}
+          isOpen={isOpen}
         ></Modal>
         <ul className={css.gallery}>
           {images?.map(image => (
             <ImageGalleryItem
               image={image}
               key={image.id}
-              setIsOpen={this.setIsOpen}
-              changeLargeImageUrl={this.changeLargeImageUrl}
+              handleModal={handleModal}
+              changeLargeImageUrl={changeLargeImageUrl}
             ></ImageGalleryItem>
           ))}
         </ul>
         {!!images.length && (
-          <LoadMoreButton addNewPage={this.props.addNewPage} />
+          <LoadMoreButton addNewPage={addNewPage} />
         )}
       </>
     );
   }
-}
 
 ImageGallery.propTypes = {
   searchImages: PropTypes.string.isRequired,
