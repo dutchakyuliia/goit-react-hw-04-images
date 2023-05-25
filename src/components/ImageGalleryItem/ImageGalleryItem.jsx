@@ -14,9 +14,8 @@ export const ImageGalleryItem = ({ handleModal, changeLargeImageUrl, image: { la
 ImageGalleryItem.propTypes = {
   handleModal: PropTypes.func.isRequired,
   changeLargeImageUrl: PropTypes.func.isRequired, 
-   images: PropTypes.arrayOf(
-    PropTypes.shape({
+   image: PropTypes.shape({
       largeImageURL: PropTypes.string.isRequired,
       webformatURL: PropTypes.string.isRequired,
-  }))
+  })
 };

@@ -66,7 +66,5 @@ export const ImageGallery =({searchImages, page, addNewPage}) => {
 ImageGallery.propTypes = {
   searchImages: PropTypes.string.isRequired,
   page: PropTypes.number.isRequired,
-  images: PropTypes.array.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  isOpen: PropTypes.bool.isRequired,
+  addNewPage: PropTypes.func.isRequired
 };
